@@ -1,42 +1,266 @@
 <!DOCTYPE html>
-<html>
+<html lang="zh-CN">
 <head>
-    <title>个人音乐库</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>音乐播放器</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        /* 在原样式基础上添加音频控件样式 */
-        .gallery {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-            gap: 15px;
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #1a2a6c, #b21f1f, #1a2a6c);
+            color: #fff;
+            min-height: 100vh;
             padding: 20px;
         }
-        .media-item {
-            border: 1px solid #ddd;
-            padding: 10px;
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        header {
             text-align: center;
-            transition: transform 0.3s;
+            padding: 30px 20px;
+            margin-bottom: 20px;
+            position: relative;
         }
+        
+        h1 {
+            font-size: 3.5rem;
+            text-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
+            letter-spacing: 2px;
+            margin-bottom: 10px;
+            background: linear-gradient(45deg, #ff9a9e, #fad0c4, #a1c4fd);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            position: relative;
+            display: inline-block;
+        }
+        
+        h1::after {
+            content: "♪";
+            position: absolute;
+            right: -40px;
+            top: 0;
+            font-size: 2.5rem;
+            animation: pulse 2s infinite;
+        }
+        
+        .description {
+            max-width: 700px;
+            margin: 0 auto 30px;
+            font-size: 1.2rem;
+            color: #e0e0ff;
+            line-height: 1.6;
+        }
+        
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+        
+        .control-btn {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 12px 25px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .control-btn:hover {
+            background: rgba(255, 255, 255, 0.25);
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .control-btn i {
+            font-size: 1.2rem;
+        }
+        
+        .gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 25px;
+            padding: 20px;
+        }
+        
+        .media-item {
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 20px;
+            padding: 20px;
+            transition: all 0.4s ease;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+        
         .media-item:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            transform: translateY(-10px);
+            background: rgba(255, 255, 255, 0.12);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
         }
+        
+        .file-info {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+            gap: 12px;
+        }
+        
+        .music-icon {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #6a11cb, #2575fc);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+        
+        .file-name {
+            font-weight: 600;
+            font-size: 1.3rem;
+            color: #ffffff;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        
+        .file-type {
+            font-size: 0.85rem;
+            color: #a0a0ff;
+            margin-top: 3px;
+        }
+        
         audio {
             width: 100%;
-            margin-top: 10px;
-            background: #f5f5f5;
-            border-radius: 25px;
+            margin: 15px 0;
+            border-radius: 30px;
+            outline: none;
         }
-        .file-name {
-            margin-top: 8px;
-            color: #666;
-            font-size: 0.9em;
-            word-break: break-all;
+        
+        audio::-webkit-media-controls-panel {
+            background: rgba(40, 40, 80, 0.8);
+            border-radius: 30px;
+        }
+        
+        .loop-control {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 15px;
+            padding: 10px 15px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+        }
+        
+        .loop-control label {
+            cursor: pointer;
+            font-size: 1rem;
+            color: #e0e0ff;
+            user-select: none;
+        }
+        
+        .loop-control input {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            accent-color: #6a11cb;
+        }
+        
+        .visualizer {
+            height: 60px;
+            width: 100%;
+            margin-top: 20px;
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            gap: 3px;
+        }
+        
+        .bar {
+            width: 6px;
+            background: linear-gradient(to top, #6a11cb, #2575fc);
+            border-radius: 3px 3px 0 0;
+            height: 10px;
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 50px;
+            padding: 20px;
+            font-size: 1rem;
+            color: rgba(255, 255, 255, 0.6);
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+        
+        @keyframes bar-animation {
+            0% { height: 10px; }
+            50% { height: 50px; }
+            100% { height: 10px; }
+        }
+        
+        @media (max-width: 768px) {
+            .gallery {
+                grid-template-columns: 1fr;
+            }
+            
+            h1 {
+                font-size: 2.5rem;
+            }
         }
     </style>
 </head>
 <body>
-    <h1 style="text-align: center; color: #333;">个人音乐库</h1>
-    <div class="gallery" id="gallery"></div>
+    <div class="container">
+        <header>
+            <h1>个人音乐库</h1>
+            <p class="description">精选音乐收藏，随时随地享受高品质音乐体验。所有音乐仅供个人欣赏使用。</p>
+            
+            <div class="controls">
+                <button class="control-btn" id="playAll">
+                    <i class="fas fa-play"></i> 播放全部
+                </button>
+                <button class="control-btn" id="pauseAll">
+                    <i class="fas fa-pause"></i> 暂停全部
+                </button>
+                <button class="control-btn" id="stopAll">
+                    <i class="fas fa-stop"></i> 停止全部
+                </button>
+            </div>
+        </header>
+        
+        <div class="gallery" id="gallery">
+            <!-- 音乐项将通过JavaScript动态加载 -->
+        </div>
+        
+        <footer>
+            <p>© 2023 个人音乐库 | 仅供个人使用</p>
+        </footer>
+    </div>
 
     <script>
         // 配置参数
@@ -47,10 +271,15 @@
             mediaFolder: 'assets/media'
         };
 
-        // 自动生成路径
-        const rawBase = `https://raw.githubusercontent.com/${config.userName}/${config.repoName}/${config.branch}`;
-        const mediaPath = `${rawBase}/${config.mediaFolder}/`;
-        const apiUrl = `https://api.github.com/repos/${config.userName}/${config.repoName}/contents/${config.mediaFolder}?ref=${config.branch}`;
+        // 使用CDN加速路径
+        const cdnBase = `https://cdn.jsdelivr.net/gh/${config.userName}/${config.repoName}@${config.branch}/`;
+        const mediaPath = `${cdnBase}${config.mediaFolder}/`;
+        
+        // 优化后的API请求
+        const apiUrl = `https://api.github.com/repos/${config.userName}/${config.repoName}/contents/${config.mediaFolder}?ref=${config.branch}&_=${Date.now()}`;
+        
+        // 存储所有audio元素的引用
+        let allAudioElements = [];
 
         // 加载音乐文件
         async function loadMedia() {
@@ -58,43 +287,168 @@
             
             try {
                 const response = await fetch(apiUrl);
-                if (!response.ok) throw new Error(`HTTP错误 ${response.status}`);
+                if (!response.ok) throw new Error(`请求失败: ${response.status}`);
                 
                 const files = await response.json();
 
+                // 清空之前的内容
+                gallery.innerHTML = '';
+                allAudioElements = [];
+
                 files.forEach(file => {
-                    // 仅处理音频文件
-                    if (file.name.match(/\.(mp3|wav|ogg|flac)$/i)) {
-                        const container = document.createElement('div');
-                        container.className = 'media-item';
-
-                        // 创建音频播放器
-                        const audio = document.createElement('audio');
-                        audio.controls = true;
-                        
-                        // 创建音频源
-                        const source = document.createElement('source');
-                        source.src = `${mediaPath}${encodeURIComponent(file.name)}`;
-                        source.type = `audio/${file.name.split('.').pop()}`;
-                        
-                        audio.appendChild(source);
-                        container.appendChild(audio);
-
-                        // 显示文件名
-                        const fileName = document.createElement('div');
-                        fileName.className = 'file-name';
-                        fileName.textContent = file.name;
-                        container.appendChild(fileName);
-
+                    if (isAudioFile(file.name)) {
+                        const container = createPlayer(file);
                         gallery.appendChild(container);
                     }
                 });
 
+                // 为可视化效果添加动画
+                addVisualizerAnimation();
+
             } catch (error) {
-                gallery.innerHTML = `<p style="color: red; text-align: center;">加载失败: ${error.message}</p>`;
-                console.error('加载错误:', error);
+                gallery.innerHTML = `<div class="error" style="color: #ff6b6b; text-align: center; padding: 40px; font-size: 1.2rem; grid-column: 1/-1;">
+                    <i class="fas fa-exclamation-triangle" style="font-size: 3rem; margin-bottom: 20px;"></i>
+                    <h3>加载失败</h3>
+                    <p>${error.message}</p>
+                    <p style="margin-top: 20px;">请检查网络连接或仓库配置</p>
+                </div>`;
+                console.error('错误详情:', error);
             }
         }
+
+        // 创建播放器组件
+        function createPlayer(file) {
+            const container = document.createElement('div');
+            container.className = 'media-item';
+
+            // 文件信息区域
+            const fileInfo = document.createElement('div');
+            fileInfo.className = 'file-info';
+            
+            const musicIcon = document.createElement('div');
+            musicIcon.className = 'music-icon';
+            musicIcon.innerHTML = '<i class="fas fa-music"></i>';
+            
+            const fileNameDiv = document.createElement('div');
+            const fileName = document.createElement('div');
+            fileName.className = 'file-name';
+            fileName.textContent = file.name.replace(/\.[^/.]+$/, ""); // 移除扩展名
+            
+            const fileType = document.createElement('div');
+            fileType.className = 'file-type';
+            const ext = file.name.split('.').pop().toUpperCase();
+            fileType.textContent = `${ext} 音频文件`;
+            
+            fileNameDiv.appendChild(fileName);
+            fileNameDiv.appendChild(fileType);
+            
+            fileInfo.appendChild(musicIcon);
+            fileInfo.appendChild(fileNameDiv);
+            
+            container.appendChild(fileInfo);
+
+            // 音频播放器
+            const audio = document.createElement('audio');
+            audio.controls = true;
+            audio.preload = "metadata";
+            
+            // 处理特殊字符文件名
+            const encodedName = encodeURIComponent(file.name);
+            
+            // 多格式支持
+            const sources = {
+                'mp3': 'audio/mpeg',
+                'ogg': 'audio/ogg',
+                'wav': 'audio/wav'
+            };
+
+            Object.entries(sources).forEach(([ext, type]) => {
+                const source = document.createElement('source');
+                source.src = `${mediaPath}${encodedName}`;
+                source.type = type;
+                audio.appendChild(source);
+            });
+
+            // 错误处理
+            audio.onerror = () => {
+                container.style.border = '2px solid #ff6b6b';
+                fileName.innerHTML += '<br><span style="color:#ff6b6b">播放失败</span>';
+            };
+
+            container.appendChild(audio);
+            
+            // 将audio元素添加到全局数组
+            allAudioElements.push(audio);
+
+            // 循环播放控制
+            const loopControl = document.createElement('div');
+            loopControl.className = 'loop-control';
+            
+            const loopCheckbox = document.createElement('input');
+            loopCheckbox.type = 'checkbox';
+            loopCheckbox.id = `loop-${file.name}`;
+            
+            const loopLabel = document.createElement('label');
+            loopLabel.htmlFor = `loop-${file.name}`;
+            loopLabel.textContent = '循环播放';
+            
+            loopControl.appendChild(loopCheckbox);
+            loopControl.appendChild(loopLabel);
+            container.appendChild(loopControl);
+            
+            // 将复选框与audio元素的loop属性绑定
+            loopCheckbox.addEventListener('change', function() {
+                audio.loop = this.checked;
+            });
+
+            // 可视化效果
+            const visualizer = document.createElement('div');
+            visualizer.className = 'visualizer';
+            
+            for (let i = 0; i < 20; i++) {
+                const bar = document.createElement('div');
+                bar.className = 'bar';
+                bar.style.animationDelay = `${i * 0.1}s`;
+                visualizer.appendChild(bar);
+            }
+            
+            container.appendChild(visualizer);
+
+            return container;
+        }
+
+        // 文件类型检测
+        function isAudioFile(name) {
+            return /\.(mp3|wav|ogg)$/i.test(name);
+        }
+
+        // 添加可视化效果动画
+        function addVisualizerAnimation() {
+            const bars = document.querySelectorAll('.bar');
+            bars.forEach(bar => {
+                bar.style.animation = 'bar-animation ' + (1 + Math.random() * 0.5) + 's infinite ease-in-out';
+            });
+        }
+
+        // 全局控制按钮事件
+        document.getElementById('playAll').addEventListener('click', function() {
+            allAudioElements.forEach(audio => {
+                audio.play();
+            });
+        });
+
+        document.getElementById('pauseAll').addEventListener('click', function() {
+            allAudioElements.forEach(audio => {
+                audio.pause();
+            });
+        });
+
+        document.getElementById('stopAll').addEventListener('click', function() {
+            allAudioElements.forEach(audio => {
+                audio.pause();
+                audio.currentTime = 0;
+            });
+        });
 
         window.onload = loadMedia;
     </script>
