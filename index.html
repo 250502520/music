@@ -258,7 +258,7 @@
         </div>
         
         <footer>
-            <p>© 2023 个人音乐库 | 仅供个人使用</p>
+            <p>© 2025 个人音乐库 | 仅供个人使用</p>
         </footer>
     </div>
 
@@ -401,34 +401,14 @@
                 audio.loop = this.checked;
             });
 
-            // 可视化效果
-            const visualizer = document.createElement('div');
-            visualizer.className = 'visualizer';
-            
-            for (let i = 0; i < 20; i++) {
-                const bar = document.createElement('div');
-                bar.className = 'bar';
-                bar.style.animationDelay = `${i * 0.1}s`;
-                visualizer.appendChild(bar);
-            }
-            
-            container.appendChild(visualizer);
-
-            return container;
-        }
+         
 
         // 文件类型检测
         function isAudioFile(name) {
             return /\.(mp3|wav|ogg)$/i.test(name);
         }
 
-        // 添加可视化效果动画
-        function addVisualizerAnimation() {
-            const bars = document.querySelectorAll('.bar');
-            bars.forEach(bar => {
-                bar.style.animation = 'bar-animation ' + (1 + Math.random() * 0.5) + 's infinite ease-in-out';
-            });
-        }
+        
 
         // 全局控制按钮事件
         document.getElementById('playAll').addEventListener('click', function() {
